@@ -200,7 +200,7 @@
       padding: 48px 0 40px;
     }
     .home-title {
-      font-size: 5rem;
+      font-size: clamp(2.8rem, 15vw, 5rem);
       line-height: 1;
       margin-bottom: 8px;
     }
@@ -255,7 +255,7 @@
        SCREEN: INTRO ENQUÊTE
     ───────────────────────────────────────────── */
     .case-title {
-      font-size: 2.4rem;
+      font-size: clamp(1.6rem, 7vw, 2.4rem);
       line-height: 1.2;
       margin-bottom: 8px;
     }
@@ -289,7 +289,7 @@
       align-items: baseline;
       margin-bottom: 20px;
     }
-    .game-title { font-size: 1.6rem; }
+    .game-title { font-size: clamp(1.1rem, 5vw, 1.6rem); }
 
     /* Tabs */
     .tabs {
@@ -554,7 +554,7 @@
     .result-icon.victory { color: var(--accent); }
     .result-icon.defeat  { color: var(--danger); }
     .result-title {
-      font-size: 2.8rem;
+      font-size: clamp(2rem, 9vw, 2.8rem);
       text-align: center;
       margin-bottom: 8px;
     }
@@ -670,9 +670,7 @@
       .card {
         padding: 20px;
       }
-      .home-title {
-        font-size: 3.8rem;
-      }
+      /* home-title handled by clamp() */
       .home-header {
         padding: 32px 0 28px;
       }
@@ -688,10 +686,10 @@
         white-space: nowrap;
         flex-shrink: 0;
       }
-      .game-title { font-size: 1.3rem; }
+      .game-title { }
       .timer { font-size: 0.85rem; }
-      .case-title { font-size: 1.8rem; }
-      .result-title { font-size: 2.2rem; }
+      .case-title { }
+      .result-title { }
       .deduction-grid th {
         font-size: 0.55rem;
         padding: 6px 3px;
@@ -713,7 +711,7 @@
         padding: 24px;
       }
       .home-title {
-        font-size: 4.2rem;
+        /* handled by clamp() */
       }
       .difficulty-card {
         padding: 16px 20px;
