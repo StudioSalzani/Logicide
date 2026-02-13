@@ -27,7 +27,7 @@
     /* ─────────────────────────────────────────────
        RESET & BASE
     ───────────────────────────────────────────── */
-    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; -webkit-tap-highlight-color: transparent; }
 
     html { height: 100%; }
     body {
@@ -297,7 +297,11 @@
       gap: 0;
       border-bottom: 1px solid var(--border);
       margin-bottom: 20px;
+      overflow-x: auto;
+      -webkit-overflow-scrolling: touch;
+      scrollbar-width: none;
     }
+    .tabs::-webkit-scrollbar { display: none; }
     .tab {
       padding: 10px 20px;
       font-family: 'IBM Plex Mono', monospace;
@@ -315,6 +319,8 @@
       border-right: none;
       max-width: none;
       width: auto;
+      flex-shrink: 0;
+      white-space: nowrap;
     }
     .tab:hover { color: var(--text-secondary); }
     .tab.active { color: var(--accent); border-bottom-color: var(--accent-dim); }
@@ -618,6 +624,130 @@
       height: 100%;
       background: var(--accent-dim);
       transition: width 400ms ease;
+    }
+
+    /* ─────────────────────────────────────────────
+       RESPONSIVE
+    ───────────────────────────────────────────── */
+
+    /* Grid: make it scrollable horizontally on small screens */
+    .grid-wrapper {
+      width: 100%;
+      overflow-x: auto;
+      -webkit-overflow-scrolling: touch;
+    }
+    .grid-wrapper::-webkit-scrollbar { height: 4px; }
+    .grid-wrapper::-webkit-scrollbar-thumb { background: #222; }
+
+    /* Larger touch targets for cell buttons on mobile */
+    @media (hover: none) and (pointer: coarse) {
+      .cell-btn {
+        height: 48px;
+        font-size: 1rem;
+      }
+      .deduction-grid td {
+        height: 48px;
+        min-width: 48px;
+      }
+      .tab {
+        padding: 12px 14px;
+        font-size: 0.62rem;
+        letter-spacing: 0.12em;
+      }
+      .clue-item {
+        padding: 20px;
+      }
+      button {
+        padding: 16px 24px;
+      }
+    }
+
+    /* Small phones (< 400px) */
+    @media (max-width: 400px) {
+      #app {
+        padding: 24px 16px 60px;
+      }
+      .card {
+        padding: 20px;
+      }
+      .home-title {
+        font-size: 3.8rem;
+      }
+      .home-header {
+        padding: 32px 0 28px;
+      }
+      .tabs {
+        overflow-x: auto;
+        -webkit-overflow-scrolling: touch;
+      }
+      .tabs::-webkit-scrollbar { display: none; }
+      .tab {
+        padding: 10px 12px;
+        font-size: 0.6rem;
+        letter-spacing: 0.1em;
+        white-space: nowrap;
+        flex-shrink: 0;
+      }
+      .game-title { font-size: 1.3rem; }
+      .timer { font-size: 0.85rem; }
+      .case-title { font-size: 1.8rem; }
+      .result-title { font-size: 2.2rem; }
+      .deduction-grid th {
+        font-size: 0.55rem;
+        padding: 6px 3px;
+        letter-spacing: 0.06em;
+      }
+      .deduction-grid td:first-child {
+        font-size: 0.58rem;
+        padding: 6px 8px;
+        letter-spacing: 0.04em;
+      }
+    }
+
+    /* Medium screens (400–600px) */
+    @media (max-width: 600px) {
+      #app {
+        padding: 28px 20px 60px;
+      }
+      .card {
+        padding: 24px;
+      }
+      .home-title {
+        font-size: 4.2rem;
+      }
+      .difficulty-card {
+        padding: 16px 20px;
+      }
+      .suspect-item {
+        flex-direction: column;
+        gap: 2px;
+        align-items: flex-start;
+      }
+      .accusation-label {
+        font-size: 0.6rem;
+      }
+      .accusation-select {
+        font-size: 0.7rem;
+        padding: 12px 14px;
+      }
+    }
+
+    /* Ensure grid never breaks layout */
+    @media (max-width: 540px) {
+      .deduction-grid {
+        font-size: 0.8rem;
+      }
+      .deduction-grid td {
+        width: 44px;
+        height: 44px;
+        min-width: 40px;
+      }
+      .deduction-grid td:first-child {
+        white-space: normal;
+        word-break: break-word;
+        max-width: 90px;
+        min-width: 70px;
+      }
     }
   </style>
 </head>
@@ -1212,6 +1342,9 @@ function buildGridTable(labelText, rows, cols) {
   label.textContent = labelText;
   wrap.appendChild(label);
 
+  const scrollWrap = document.createElement('div');
+  scrollWrap.className = 'grid-wrapper';
+
   const table = document.createElement('table');
   table.className = 'deduction-grid';
 
@@ -1251,7 +1384,8 @@ function buildGridTable(labelText, rows, cols) {
     tbody.appendChild(tr);
   });
   table.appendChild(tbody);
-  wrap.appendChild(table);
+  scrollWrap.appendChild(table);
+  wrap.appendChild(scrollWrap);
   return wrap;
 }
 
