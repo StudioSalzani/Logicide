@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>MURDLE — Jeu d'Enquête</title>
+  <title>LOGICIDE — Jeu d'Enquête</title>
   <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@300;400&family=IBM+Plex+Mono:wght@400&family=Inter:wght@400;500&display=swap" rel="stylesheet" />
   <style>
     /* ─────────────────────────────────────────────
@@ -14,10 +14,10 @@
       --bg-raised:      #111111;
       --bg-card:        #141414;
       --text-primary:   #e8e8e8;
-      --text-secondary: #6b6b6b;
-      --text-muted:     #3d3d3d;
-      --border:         #222222;
-      --border-active:  #444444;
+      --text-secondary: #a0a0a0;
+      --text-muted:     #686868;
+      --border:         #2a2a2a;
+      --border-active:  #555555;
       --accent:         #c8b896;
       --accent-dim:     #6b5e3f;
       --danger:         #8b3a3a;
@@ -35,8 +35,8 @@
       background: var(--bg);
       color: var(--text-primary);
       font-family: 'Inter', sans-serif;
-      font-size: 0.875rem;
-      line-height: 1.75;
+      font-size: 0.95rem;
+      line-height: 1.8;
       overflow-x: hidden;
     }
 
@@ -211,8 +211,8 @@
     }
     .home-desc {
       color: var(--text-secondary);
-      font-size: 0.85rem;
-      line-height: 1.8;
+      font-size: 0.925rem;
+      line-height: 1.85;
       max-width: 400px;
       margin: 0 auto;
     }
@@ -261,8 +261,8 @@
     }
     .case-body {
       color: var(--text-secondary);
-      font-size: 0.875rem;
-      line-height: 1.8;
+      font-size: 0.925rem;
+      line-height: 1.85;
     }
     .suspects-list {
       margin-top: 16px;
@@ -278,7 +278,7 @@
       border-bottom: 1px solid var(--border);
     }
     .suspect-name { color: var(--text-primary); font-size: 0.9rem; }
-    .suspect-meta { font-size: 0.65rem; color: var(--text-muted); font-family: 'IBM Plex Mono', monospace; letter-spacing: 0.15em; text-transform: uppercase; }
+    .suspect-meta { font-size: 0.68rem; color: var(--text-secondary); font-family: 'IBM Plex Mono', monospace; letter-spacing: 0.12em; text-transform: uppercase; }
 
     /* ─────────────────────────────────────────────
        SCREEN: JEU PRINCIPAL
@@ -350,10 +350,10 @@
     }
     .deduction-grid th {
       font-family: 'IBM Plex Mono', monospace;
-      font-size: 0.58rem;
-      letter-spacing: 0.15em;
+      font-size: 0.6rem;
+      letter-spacing: 0.12em;
       text-transform: uppercase;
-      color: var(--text-muted);
+      color: var(--text-secondary);
       padding: 8px 4px;
       background: var(--bg-raised);
     }
@@ -366,9 +366,9 @@
       text-align: left;
       padding: 8px 12px;
       font-family: 'IBM Plex Mono', monospace;
-      font-size: 0.62rem;
-      letter-spacing: 0.1em;
-      color: var(--text-secondary);
+      font-size: 0.65rem;
+      letter-spacing: 0.08em;
+      color: var(--text-primary);
       background: var(--bg-raised);
       width: auto;
       white-space: nowrap;
@@ -440,16 +440,16 @@
     .clue-item.used { border-color: var(--border); opacity: 0.45; }
     .clue-number {
       font-family: 'IBM Plex Mono', monospace;
-      font-size: 0.58rem;
+      font-size: 0.6rem;
       letter-spacing: 0.2em;
-      color: var(--text-muted);
+      color: var(--text-secondary);
       text-transform: uppercase;
       margin-bottom: 6px;
     }
     .clue-text {
-      font-size: 0.875rem;
+      font-size: 0.925rem;
       color: var(--text-primary);
-      line-height: 1.7;
+      line-height: 1.75;
     }
     .clue-item.revealed .clue-text { color: var(--accent); }
 
@@ -555,8 +555,8 @@
     .result-sub {
       color: var(--text-secondary);
       text-align: center;
-      font-size: 0.875rem;
-      line-height: 1.8;
+      font-size: 0.925rem;
+      line-height: 1.85;
     }
     .verdict-row {
       display: flex;
@@ -564,7 +564,7 @@
       padding: 12px 0;
       border-bottom: 1px solid var(--border);
     }
-    .verdict-key { color: var(--text-muted); font-family: 'IBM Plex Mono', monospace; font-size: 0.65rem; letter-spacing: 0.2em; text-transform: uppercase; }
+    .verdict-key { color: var(--text-secondary); font-family: 'IBM Plex Mono', monospace; font-size: 0.65rem; letter-spacing: 0.2em; text-transform: uppercase; }
     .verdict-val { color: var(--text-primary); font-size: 0.875rem; }
     .verdict-val.correct { color: var(--accent); }
     .verdict-val.wrong   { color: var(--danger); }
@@ -578,9 +578,9 @@
       color: var(--text-secondary);
     }
     .rules-section p {
-      font-size: 0.85rem;
+      font-size: 0.925rem;
       color: var(--text-secondary);
-      line-height: 1.8;
+      line-height: 1.85;
       margin-bottom: 8px;
     }
 
@@ -630,7 +630,7 @@
   <section class="screen active" id="screen-home">
     <div class="home-header">
       <div class="t-label ambient" style="margin-bottom:20px;">Jeu d'enquête et de déduction</div>
-      <h1 class="t-title home-title">MURDLE</h1>
+      <h1 class="t-title home-title">LOGICIDE</h1>
       <p class="t-heading home-sub">— Qui a commis le crime ? —</p>
       <p class="home-desc">
         Un meurtre a été commis. Des suspects, des lieux, des armes. 
@@ -837,7 +837,7 @@
     <div class="tab-panel" id="tab-accuse">
       <div class="card" style="margin-bottom:12px;">
         <div class="t-label" style="margin-bottom:8px;">Attention</div>
-        <p style="font-size:0.85rem;color:var(--text-secondary);line-height:1.7;">
+        <p style="font-size:0.925rem;color:var(--text-secondary);line-height:1.75;">
           Une accusation erronée met fin à l'enquête. N'accusez que lorsque vous êtes certain de votre déduction.
         </p>
       </div>
