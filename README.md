@@ -1,12 +1,4 @@
-# MURDLE — Jeu d'enquête et de déduction
-
-Un jeu de logique à la Cluedo, jouable directement dans le navigateur, en un seul fichier HTML.
-
-## Jouer
-
-Ouvrez simplement `index.html` dans un navigateur — aucune dépendance, aucun serveur requis.
-
-Ou hébergez-le sur GitHub Pages : `Settings → Pages → Deploy from branch (main / root)`.
+#Jeu d'enquête et de déduction
 
 ## Règles
 
@@ -39,40 +31,3 @@ Un minuteur décompte. Si le temps s'écoule, l'affaire reste non résolue.
 | Novice | 3 | 3 | 3 | 10 min |
 | Inspecteur | 4 | 4 | 4 | 15 min |
 | Détective | 5 | 5 | 5 | 20 min |
-
-## Structure
-
-```
-murdle/
-└── index.html    — Jeu complet (HTML + CSS + JS inline)
-```
-
-Tout le jeu tient en un seul fichier HTML, sans dépendance externe mis à part les polices Google Fonts.
-
-## Ajouter des affaires
-
-Les affaires sont définies dans l'objet `CASES` du script JavaScript. Pour en ajouter une :
-
-```js
-CASES.nouveauNiveau = {
-  id: "0999",
-  title: "Le Titre de l'Affaire",
-  desc: "Description narrative du crime.",
-  suspects: [
-    { name: "Nom Suspect", desc: "Profession / Âge" },
-    // ...
-  ],
-  weapons: ["Arme 1", "Arme 2", "Arme 3"],
-  places:  ["Lieu 1", "Lieu 2", "Lieu 3"],
-  clues: [
-    "Premier indice logique.",
-    // ...
-  ],
-  solution: { suspect: "Nom Suspect", weapon: "Arme 1", place: "Lieu 2" },
-  time: 600, // secondes
-};
-```
-
-## Design
-
-Design system minimaliste : noir et blanc, police Cormorant Garamond pour les titres, IBM Plex Mono pour les étiquettes, Inter pour le corps du texte. Accent parchmin doré (`#c8b896`) uniquement pour les états actifs.
