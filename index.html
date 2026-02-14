@@ -248,6 +248,38 @@
     .difficulty-card.selected {
       border-color: var(--accent-dim);
     }
+
+    /* Exceptional / locked card */
+    .difficulty-card.exceptional {
+      border-color: var(--accent-dim);
+      position: relative;
+    }
+    .difficulty-card.exceptional .diff-title {
+      color: var(--accent);
+    }
+    .difficulty-card.locked {
+      opacity: 0.4;
+      cursor: not-allowed;
+      border-color: var(--border);
+    }
+    .difficulty-card.locked .diff-title {
+      color: var(--text-muted);
+    }
+    .exceptional-badge {
+      font-family: 'IBM Plex Mono', monospace;
+      font-size: 0.55rem;
+      letter-spacing: 0.2em;
+      text-transform: uppercase;
+      color: var(--accent-dim);
+      margin-bottom: 2px;
+    }
+    .exceptional-status {
+      font-family: 'IBM Plex Mono', monospace;
+      font-size: 0.62rem;
+      letter-spacing: 0.12em;
+      color: var(--text-muted);
+      text-align: right;
+    }
     .diff-title { font-size: 1.1rem; color: var(--text-primary); }
     .diff-info { font-size: 0.7rem; color: var(--text-muted); text-align: right; }
 
@@ -795,7 +827,7 @@
 
     <div class="card">
       <h2 class="t-title" style="font-size:2rem;margin-bottom:4px;">Règles</h2>
-      <p class="t-label" style="margin-bottom:24px;">Comment jouer à Murdle</p>
+      <p class="t-label" style="margin-bottom:24px;">Comment jouer à Logicide</p>
 
       <div class="rules-section">
         <h3 class="t-heading">L'objectif</h3>
@@ -818,7 +850,7 @@
     </div>
 
     <div class="mt-12">
-      <button class="btn-primary" onclick="showScreen('screen-difficulty')">Commencer à enquêter</button>
+      <button class="btn-primary" onclick="showScreen('screen-difficulty'); updateExceptionalCard();">Commencer à enquêter</button>
     </div>
   </section>
 
@@ -865,6 +897,19 @@
           <div class="diff-info">
             <div>20 min</div>
             <div>9 indices</div>
+          </div>
+        </div>
+
+        <div class="difficulty-card exceptional locked" id="exceptional-card" data-diff="exceptionnel">
+          <div>
+            <div class="exceptional-badge">Dossier d'Exception</div>
+            <div class="t-heading diff-title">Le Bal des Masques</div>
+            <div class="t-label mt-8">6 suspects — 6 armes — 6 lieux</div>
+          </div>
+          <div class="diff-info">
+            <div>30 min</div>
+            <div>10 indices</div>
+            <div class="exceptional-status mt-8">3 dossiers restants</div>
           </div>
         </div>
       </div>
@@ -1115,7 +1160,58 @@ const CASES = {
     solution: { suspect: "Dr. Amara Köse", weapon: "Médicament surdosé", place: "Chambre 14" },
     time: 1200,
   },
+  exceptionnel: {
+    id: "EX100",
+    title: "Le Bal des Masques",
+    desc: "Lors d'un bal masqué dans un hôtel historique de la ville, un collectionneur d'art a été retrouvé mort dans la suite présidentielle. La tempête a isolé l'hôtel, et le meurtrier se trouve parmi les six invités restés sur place. L'heure exacte du crime est cruciale pour démêler alibis et mouvements.",
+    suspects: [
+      { name: "Adèle Vernier",     desc: "Historienne d'art / 42 ans"    },
+      { name: "Lucien Morvan",     desc: "Critique gastronomique / 50 ans" },
+      { name: "Clémentine Dumas",  desc: "Blogueuse lifestyle / 28 ans"   },
+      { name: "Hector Langlois",   desc: "Avocat / 47 ans"                },
+      { name: "Sophie Kerjean",    desc: "Directrice de galerie / 39 ans" },
+      { name: "Vincent Caron",     desc: "Restaurateur / 55 ans"          },
+    ],
+    weapons: ["Poison rare", "Couteau de collection", "Chandelier", "Cordage", "Pistolet ancien", "Écharpe de soie"],
+    places:  ["Suite présidentielle", "Bibliothèque", "Cuisine", "Salle de bal", "Jardin d'hiver", "Galerie d'art privée"],
+    clues: [
+      "Le chandelier n'a jamais quitté la salle de bal, mais il présente une empreinte partielle.",
+      "Adèle Vernier a été vue dans la bibliothèque à 22h15, mais son carnet est absent — elle ne pouvait pas être partout.",
+      "Le poison rare provient d'une collection pharmaceutique que Vincent Caron seul pouvait manipuler.",
+      "Clémentine Dumas a filmé le début du bal et apparaît dans la galerie d'art à 21h50 sur sa vidéo.",
+      "Hector Langlois a emprunté un cordage dans le jardin d'hiver à 22h05 selon le personnel.",
+      "Sophie Kerjean était enfermée dans la suite présidentielle, mais la clé a été remise à un invité à 22h20.",
+      "Le pistolet ancien était exposé dans la galerie et a été déplacé — seule une personne en connaissance des lieux pouvait le faire.",
+      "L'écharpe de soie appartient à Lucien Morvan, qui prétendait être au buffet entre 22h10 et 22h30.",
+      "Des traces de pas dans le jardin d'hiver correspondent à deux suspects différents.",
+      "Le meurtre a eu lieu entre 22h15 et 22h25 — déterminer qui était où à ce moment est crucial.",
+    ],
+    solution: { suspect: "Vincent Caron", weapon: "Poison rare", place: "Suite présidentielle" },
+    time: 1800,
+  },
 };
+
+/* ══════════════════════════════════════════════════════════════
+   SUIVI DES CAS JOUÉS
+══════════════════════════════════════════════════════════════ */
+const REQUIRED_CASES = ['facile', 'moyen', 'difficile'];
+
+function markCasePlayed(diff) {
+  const played = JSON.parse(localStorage.getItem('logicide_played') || '[]');
+  if (!played.includes(diff)) {
+    played.push(diff);
+    localStorage.setItem('logicide_played', JSON.stringify(played));
+  }
+}
+
+function allRequiredCasesPlayed() {
+  const played = JSON.parse(localStorage.getItem('logicide_played') || '[]');
+  return REQUIRED_CASES.every(d => played.includes(d));
+}
+
+function getPlayedCases() {
+  return JSON.parse(localStorage.getItem('logicide_played') || '[]');
+}
 
 /* ══════════════════════════════════════════════════════════════
    ÉTAT DU JEU
@@ -1123,7 +1219,7 @@ const CASES = {
 const state = {
   difficulty: null,
   caseData: null,
-  gridData: {},       // "S:W" / "S:P" / "W:P" -> "yes" | "no" | "empty"
+  gridData: {},
   usedClues: new Set(),
   timerInterval: null,
   elapsed: 0,
@@ -1137,7 +1233,6 @@ function showScreen(id) {
   document.querySelectorAll('.screen').forEach(s => s.classList.remove('active'));
   const target = document.getElementById(id);
   target.classList.add('active');
-  // Re-trigger card animations
   target.querySelectorAll('.card').forEach(c => {
     c.style.animation = 'none';
     void c.offsetWidth;
@@ -1149,6 +1244,7 @@ function showScreen(id) {
    SÉLECTION DIFFICULTÉ
 ══════════════════════════════════════════════════════════════ */
 function selectDifficulty(diff, el) {
+  if (el.classList.contains('locked')) return;
   document.querySelectorAll('.difficulty-card').forEach(c => c.classList.remove('selected'));
   el.classList.add('selected');
   state.difficulty = diff;
@@ -1167,7 +1263,6 @@ function startGame() {
   state.elapsed = 0;
   state.gameActive = false;
 
-  // Remplir l'intro
   document.getElementById('case-number').textContent = `Affaire n° ${c.id}`;
   document.getElementById('case-title').textContent = c.title;
   document.getElementById('case-desc').textContent = c.desc;
@@ -1198,14 +1293,13 @@ function startGame() {
 function beginInvestigation() {
   const c = state.caseData;
   document.getElementById('game-title').textContent = c.title;
-  const labels = { facile: 'Novice', moyen: 'Inspecteur', difficile: 'Détective' };
+  const labels = { facile: 'Novice', moyen: 'Inspecteur', difficile: 'Détective', exceptionnel: 'Dossier d\'Exception' };
   document.getElementById('game-difficulty-label').textContent = labels[state.difficulty];
 
   buildGrid();
   buildClues();
   buildAccusationSelects();
 
-  // Reset tabs
   switchTab('grid', document.querySelector('.tab[data-tab="grid"]'));
   document.getElementById('notes-area').value = '';
 
@@ -1245,7 +1339,6 @@ function startTimer() {
       timerEl.classList.add('warning');
     }
 
-    // Progress bar (inversé — se vide)
     const pct = (remaining / maxTime) * 100;
     document.getElementById('progress-fill').style.width = pct + '%';
   }, 1000);
@@ -1267,7 +1360,6 @@ function cycleCellState(a, b) {
   updateCell(a, b);
   updateProgress();
 
-  // Auto-exclusion : si on confirme, exclure les autres
   if (next === 'yes') {
     autoExclude(a, b);
   }
@@ -1279,14 +1371,12 @@ function autoExclude(confirmed_a, confirmed_b) {
   const weapons = c.weapons;
   const places = c.places;
 
-  // Determine category of a and b
   const catA = suspects.includes(confirmed_a) ? 'suspect' : weapons.includes(confirmed_a) ? 'weapon' : 'place';
   const catB = suspects.includes(confirmed_b) ? 'suspect' : weapons.includes(confirmed_b) ? 'weapon' : 'place';
 
   let listA = catA === 'suspect' ? suspects : catA === 'weapon' ? weapons : places;
   let listB = catB === 'suspect' ? suspects : catB === 'weapon' ? weapons : places;
 
-  // Exclude all others in the same row/col
   listA.forEach(a => {
     if (a !== confirmed_a) {
       const k = gridKey(a, confirmed_b);
@@ -1323,11 +1413,8 @@ function buildGrid() {
   const container = document.getElementById('grid-container');
   container.innerHTML = '';
 
-  // Table 1: Suspects × Armes
   container.appendChild(buildGridTable('Suspects × Armes', suspects, weapons));
-  // Table 2: Suspects × Lieux
   container.appendChild(buildGridTable('Suspects × Lieux', suspects, places));
-  // Table 3: Armes × Lieux
   container.appendChild(buildGridTable('Armes × Lieux', weapons, places));
 }
 
@@ -1346,7 +1433,6 @@ function buildGridTable(labelText, rows, cols) {
   const table = document.createElement('table');
   table.className = 'deduction-grid';
 
-  // Header
   const thead = document.createElement('thead');
   const headRow = document.createElement('tr');
   const emptyTh = document.createElement('th');
@@ -1360,7 +1446,6 @@ function buildGridTable(labelText, rows, cols) {
   thead.appendChild(headRow);
   table.appendChild(thead);
 
-  // Body
   const tbody = document.createElement('tbody');
   rows.forEach(row => {
     const tr = document.createElement('tr');
@@ -1398,7 +1483,6 @@ function updateProgress() {
   const total = suspects.length * weapons.length + suspects.length * places.length + weapons.length * places.length;
   const filled = Object.values(state.gridData).filter(v => v !== 'empty').length;
   const pct = Math.min(100, Math.round((filled / total) * 100));
-  // Don't override timer progress bar here — it's time-based
 }
 
 /* ══════════════════════════════════════════════════════════════
@@ -1474,7 +1558,6 @@ function makeAccusation() {
   const place   = document.getElementById('acc-place').value;
 
   if (!suspect || !weapon || !place) {
-    // Highlight missing fields briefly
     [!suspect && 'acc-suspect', !weapon && 'acc-weapon', !place && 'acc-place'].forEach(id => {
       if (!id) return;
       const el = document.getElementById(id);
@@ -1501,9 +1584,8 @@ function gameOver(victory, reason, accusation = null) {
   const timeUsed = state.elapsed;
   const totalTime = state.caseData.time;
 
-  // Best time
   if (victory) {
-    const bestKey = `murdle_best_${state.difficulty}`;
+    const bestKey = `logicide_best_${state.difficulty}`;
     const prev = parseInt(localStorage.getItem(bestKey) || '99999');
     if (timeUsed < prev) {
       localStorage.setItem(bestKey, timeUsed);
@@ -1511,7 +1593,11 @@ function gameOver(victory, reason, accusation = null) {
     updateBestTime();
   }
 
-  // Fill result screen
+  if (state.difficulty !== 'exceptionnel') {
+    markCasePlayed(state.difficulty);
+  }
+  updateExceptionalCard();
+
   const iconEl   = document.getElementById('result-icon');
   const titleEl  = document.getElementById('result-title');
   const subEl    = document.getElementById('result-sub');
@@ -1538,7 +1624,6 @@ function gameOver(victory, reason, accusation = null) {
     subEl.textContent = `Votre accusation était incorrecte. L'enquête est compromise.`;
   }
 
-  // Verdict
   const vSuspect = document.getElementById('v-suspect');
   const vWeapon  = document.getElementById('v-weapon');
   const vPlace   = document.getElementById('v-place');
@@ -1579,9 +1664,9 @@ function resetGame() {
   state.usedClues = new Set();
   state.gameActive = false;
 
-  // Reset difficulty selection
   document.querySelectorAll('.difficulty-card').forEach(c => c.classList.remove('selected'));
   document.getElementById('diff-confirm').style.display = 'none';
+  updateExceptionalCard();
 
   showScreen('screen-difficulty');
 }
@@ -1590,10 +1675,10 @@ function resetGame() {
    MEILLEUR TEMPS
 ══════════════════════════════════════════════════════════════ */
 function updateBestTime() {
-  const diffs = ['facile', 'moyen', 'difficile'];
+  const diffs = ['facile', 'moyen', 'difficile', 'exceptionnel'];
   let best = null;
   diffs.forEach(d => {
-    const t = parseInt(localStorage.getItem(`murdle_best_${d}`) || '0');
+    const t = parseInt(localStorage.getItem(`logicide_best_${d}`) || '0');
     if (t > 0 && (best === null || t < best)) best = t;
   });
   const el = document.getElementById('best-time');
@@ -1606,9 +1691,33 @@ function updateBestTime() {
 }
 
 /* ══════════════════════════════════════════════════════════════
+   CARTE EXCEPTIONNELLE — DÉVERROUILLAGE
+══════════════════════════════════════════════════════════════ */
+function updateExceptionalCard() {
+  const card = document.getElementById('exceptional-card');
+  if (!card) return;
+  const unlocked = allRequiredCasesPlayed();
+  const played = getPlayedCases();
+
+  if (unlocked) {
+    card.classList.remove('locked');
+    card.onclick = () => selectDifficulty('exceptionnel', card);
+    card.querySelector('.exceptional-status').textContent = 'Déverrouillé';
+    card.querySelector('.exceptional-status').style.color = 'var(--accent)';
+  } else {
+    card.classList.add('locked');
+    card.onclick = null;
+    const remaining = REQUIRED_CASES.filter(d => !played.includes(d)).length;
+    card.querySelector('.exceptional-status').textContent =
+      `${remaining} dossier${remaining > 1 ? 's' : ''} restant${remaining > 1 ? 's' : ''}`;
+  }
+}
+
+/* ══════════════════════════════════════════════════════════════
    INIT
 ══════════════════════════════════════════════════════════════ */
 updateBestTime();
+updateExceptionalCard();
 </script>
 </body>
 </html>
